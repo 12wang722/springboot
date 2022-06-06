@@ -41,6 +41,11 @@ public class UserController {
         return userSercice.removeById(id);
     }
 
+    @PostMapping("/del/batch")
+    public boolean deleteBatch(@RequestBody List<Integer> ids){
+        return userSercice.removeByIds(ids);
+    }
+
     //分页查询
     //接口路径：/user/page?pageNum=1&pageSize=10
     //@RequestParam接收
@@ -66,19 +71,20 @@ public class UserController {
     public IPage<User> findPage(@RequestParam Integer pageNum,
                                 @RequestParam Integer pageSize,
                                 @RequestParam(defaultValue = "") String username,
-                                @RequestParam(defaultValue = "") String nickname,
+                                @RequestParam(defaultValue = "") String email,
                                 @RequestParam(defaultValue = "") String address) {
         IPage<User> page = new Page<>(pageNum,pageSize);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if(!"".equals(username)) {
             queryWrapper.like("username", username);
         }
-        if(!"".equals(nickname)) {
-            queryWrapper.like("nickname", nickname);
+        if(!"".equals(email)) {
+            queryWrapper.like("email", email);
         }
         if(!"".equals(address)) {
             queryWrapper.like("address", address);
         }
+        queryWrapper.orderByDesc("id");
         return userSercice.page(page, queryWrapper);
 
     }
